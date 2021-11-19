@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Runtime.InteropServices;
+using System;
 using System.Linq;
 using System.DirectoryServices.AccountManagement;
 
@@ -8,6 +9,11 @@ namespace ActiveDirectoryScanner
     {
         static void Main(string[] args)
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
+
 #if DEBUG
             // If we're debugging, set up some test args.
             args = new string[] { "Test" };
