@@ -8,6 +8,11 @@ namespace ActiveDirectoryScanner
     {
         static void Main(string[] args)
         {
+#if DEBUG
+            // If we're debugging, set up some test args.
+            args = new string[] { "Test" };
+#endif
+
             // Validate input.
             if (args == null || args.Count() != 1)
             {
@@ -16,23 +21,40 @@ namespace ActiveDirectoryScanner
             }
 
             // Set up a domain context.
-            using (var principalContext = new PrincipalContext(ContextType.Domain))
+            try
             {
-                // Search for the specified group.
-                var group = GroupPrincipal.FindByIdentity(principalContext, args[0]);
-
-                // If it wasn't found, display an error message.
-                if (group == null)
+                using (var principalContext = new PrincipalContext(ContextType.Domain))
                 {
-                    Console.WriteLine($"Error: Group '{args[0]}' not found.");
-                    return;
-                }
+                    // Search for the specified group.
+                    GroupPrincipal group = null;
+                    
+                    try
+                    {
+                        group = GroupPrincipal.FindByIdentity(principalContext, args[0]);
+                    }
+                    catch (MultipleMatchesException)
+                    {
+                        Console.WriteLine($"Error: Multiple matches found for '{args[0]}'.");
+                        return;
+                    } 
 
-                // Else, print the group's members.
-                foreach (var member in group.Members)
-                {
-                    Console.WriteLine(member.DisplayName);
+                    // If it wasn't found, display an error message.
+                    if (group == null)
+                    {
+                        Console.WriteLine($"Error: Group '{args[0]}' not found.");
+                        return;
+                    }
+
+                    // Else, print the group's members.
+                    foreach (var member in group.Members)
+                    {
+                        Console.WriteLine(member.DisplayName);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error: {e.Message}");
             }
         }
     }
