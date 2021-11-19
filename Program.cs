@@ -9,8 +9,10 @@ namespace ActiveDirectoryScanner
     {
         static void Main(string[] args)
         {
+            // If this app isn't running on Windows, display an error message.
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
+                Console.WriteLine("Error: This app is only compatible with Windows.");
                 return;
             }
 
