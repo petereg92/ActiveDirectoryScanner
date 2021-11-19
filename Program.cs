@@ -62,7 +62,8 @@ namespace ActiveDirectoryScanner
                     }
                     else
                     {
-                        foreach (var member in group.Members)
+                        Console.WriteLine($"Members of group '{args[0]}':")
+                        foreach (var member in members)
                         {
                             Console.WriteLine(member.DisplayName);
                         }
