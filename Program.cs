@@ -54,9 +54,18 @@ namespace ActiveDirectoryScanner
                     }
 
                     // Else, print the group's members.
-                    foreach (var member in group.Members)
+                    var members = group.GetMembers();
+
+                    if (members.Count() == 0)
                     {
-                        Console.WriteLine(member.DisplayName);
+                        Console.WriteLine($"Group '{args[0]}' contains no members.");
+                    }
+                    else
+                    {
+                        foreach (var member in group.Members)
+                        {
+                            Console.WriteLine(member.DisplayName);
+                        }
                     }
                 }
             }
