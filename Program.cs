@@ -1,7 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System;
 using System.Linq;
-using System.DirectoryServices.AccountManagement;
 
 namespace ActiveDirectoryScanner
 {
@@ -28,52 +27,10 @@ namespace ActiveDirectoryScanner
                 return;
             }
 
-            // Set up a domain context.
-            try
-            {
-                using (var principalContext = new PrincipalContext(ContextType.Domain))
-                {
-                    // Search for the specified group.
-                    GroupPrincipal group = null;
-                    
-                    try
-                    {
-                        group = GroupPrincipal.FindByIdentity(principalContext, args[0]);
-                    }
-                    catch (MultipleMatchesException)
-                    {
-                        Console.WriteLine($"Error: Multiple matches found for '{args[0]}'.");
-                        return;
-                    } 
+            // Print the members of the specified group.
+            var adGroupMemberPrinter = new AdGroupMemberPrinter();
 
-                    // If it wasn't found, display an error message.
-                    if (group == null)
-                    {
-                        Console.WriteLine($"Error: Group '{args[0]}' not found.");
-                        return;
-                    }
-
-                    // Else, print the group's members.
-                    var members = group.GetMembers();
-
-                    if (members.Count() == 0)
-                    {
-                        Console.WriteLine($"Group '{args[0]}' contains no members.");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Members of group '{args[0]}':")
-                        foreach (var member in members)
-                        {
-                            Console.WriteLine(member.DisplayName);
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Error: {e.Message}");
-            }
+            adGroupMemberPrinter.PrintGroupMembers(args[0]);
         }
     }
 }
